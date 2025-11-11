@@ -34,6 +34,20 @@ resource "aws_amplify_branch" "main" {
   framework         = "React"
   stage             = "PRODUCTION"
 }
+resource "aws_amplify_webhook" "main" {
+  app_id      = aws_amplify_app.web.id
+  branch_name = aws_amplify_branch.main.branch_name
+  description = "Trigger Amplify build on Terraform apply"
+}
+resource "null_resource" "trigger_build" {
+  provisioner "local-exec" {
+    command = "curl -s -X POST ${aws_amplify_webhook.main.url}"
+  }
+
+  triggers = {
+    build = timestamp()
+  }
+}
 
 output "amplify_url" {
   value = "https://${aws_amplify_branch.main.branch_name}.${aws_amplify_app.web.default_domain}"
