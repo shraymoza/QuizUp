@@ -9,6 +9,23 @@ terraform {
 }
 
 
+module "cognito" {
+  source       = "./modules/cognito"
+  project_name = "quizup"
+  region       = var.aws_region
+  # Start with localhost only; after first Amplify build you can re-apply with the Amplify URL included
+  callback_urls = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:8080"
+  ]
+  logout_urls = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:8080"
+  ]
+}
+
 module "amplify_app" {
   source = "./modules/amplify_app"
 
@@ -17,7 +34,7 @@ module "amplify_app" {
   branch_name          = var.branch_name
   github_repo          = var.github_repo
   github_token         = var.github_token
-  cognito_user_pool_id = var.cognito_user_pool_id
-  cognito_client_id    = var.cognito_client_id
+  cognito_user_pool_id = module.cognito.user_pool_id
+  cognito_client_id    = module.cognito.client_id
 }
 
