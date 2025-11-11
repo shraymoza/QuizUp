@@ -13,9 +13,9 @@ variable "amplify_repository_url" {
   description = "Git repository URL for Amplify (e.g., https://github.com/user/repo.git)"
 }
 
-variable "github_oauth_token" {
+variable "github_token" {
   type        = string
-  description = "GitHub OAuth token"
+  description = "GitHub token"
   sensitive   = true
 }
 
@@ -24,5 +24,6 @@ variable "branch_name" {
   description = "Git branch to build"
   default     = "main"
 }
+
 
 

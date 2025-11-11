@@ -1,8 +1,3 @@
-variable "github_token" { type = string }
-variable "repo_url" { type = string }
-variable "repo_branch" { type = string }
-variable "frontend_dir" { type = string }
-
 resource "aws_amplify_app" "web" {
   name         = "quizup-web"
   repository   = var.repo_url
