@@ -9,23 +9,26 @@ resource "aws_amplify_app" "web" {
       phases:
         preBuild:
           commands:
+            - cd frontend
             - npm install
         build:
           commands:
+            - cd frontend
             - npm run build
       artifacts:
-        baseDirectory: dist
+        baseDirectory: frontend/dist
         files:
           - '**/*'
       cache:
         paths:
-          - node_modules/**/*
+          - frontend/node_modules/**/*
   YAML
 
   environment_variables = {
     NODE_ENV = "production"
   }
 }
+
 
 resource "aws_amplify_branch" "main" {
   app_id      = aws_amplify_app.web.id
