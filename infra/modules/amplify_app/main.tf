@@ -41,14 +41,14 @@ resource "aws_amplify_webhook" "main" {
 }
 resource "null_resource" "trigger_build" {
   provisioner "local-exec" {
-    # explicitly call curl.exe so PowerShell doesn’t use Invoke-WebRequest
-    command = "cmd /C curl.exe -X POST \"${aws_amplify_webhook.main.url}\""
+    command = "cmd /C curl.exe -X POST ${replace(aws_amplify_webhook.main.url, \"&\", \"^&\")}"
   }
 
   triggers = {
     build = timestamp()
   }
 }
+
 
 
 
