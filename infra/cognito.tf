@@ -32,22 +32,20 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_flows_user_pool_client = true
   supported_identity_providers         = ["COGNITO"]
 
-  # Callback URLs - include S3 website and Amplify (if configured)
-  callback_urls = concat(
-    ["http://${aws_s3_bucket_website_configuration.site_www.website_endpoint}"],
-    length(aws_amplify_app.quizup) > 0 ? [
-      "https://main.${aws_amplify_app.quizup[0].default_domain}",
-      "https://${aws_amplify_branch.main[0].branch_name}.${aws_amplify_app.quizup[0].default_domain}"
-    ] : []
-  )
-  
-  logout_urls = concat(
-    ["http://${aws_s3_bucket_website_configuration.site_www.website_endpoint}"],
-    length(aws_amplify_app.quizup) > 0 ? [
-      "https://main.${aws_amplify_app.quizup[0].default_domain}",
-      "https://${aws_amplify_branch.main[0].branch_name}.${aws_amplify_app.quizup[0].default_domain}"
-    ] : []
-  )
+  # Callback URLs - use localhost for local development (HTTPS not required for localhost)
+  # Amplify URLs (HTTPS) will be added automatically after Amplify is created
+  # This avoids a circular dependency during initial creation
+  # The null_resource in cognito_amplify_update.tf will update these after Amplify exists
+  callback_urls = [
+    "http://localhost:3000",
+    "http://localhost:5173",  # Vite default port
+    "http://localhost:8080"
+  ]
+  logout_urls = [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:8080"
+  ]
 
 
 

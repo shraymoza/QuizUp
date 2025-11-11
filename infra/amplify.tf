@@ -53,11 +53,25 @@ resource "aws_iam_role_policy" "amplify_policy" {
   })
 }
 
+# Local value to check if repository is GitHub
+locals {
+  is_github_repo = var.amplify_repository_url != "" && can(regex("^https://github\\.com", var.amplify_repository_url))
+  # Check if token exists and is not empty (trim whitespace)
+  github_token_trimmed = var.github_oauth_token != null ? trimspace(var.github_oauth_token) : ""
+  has_github_token = local.github_token_trimmed != ""
+}
+
 # AWS Amplify App
 resource "aws_amplify_app" "quizup" {
   count      = var.amplify_repository_url != "" ? 1 : 0
   name       = "${var.project_name}-web"
   repository = var.amplify_repository_url
+
+  # OAuth token is required for GitHub repositories
+  # Only set oauth_token if it's a GitHub repo AND token is provided (not empty)
+  # If using GitHub and token is missing, AWS will return error: "You should at least provide one valid token"
+  # See GITHUB_TOKEN_SETUP.md for instructions on creating and adding the token
+  oauth_token = local.is_github_repo && local.has_github_token ? local.github_token_trimmed : null
 
   # Build specification
   build_spec = <<-EOT
@@ -101,10 +115,6 @@ resource "aws_amplify_app" "quizup" {
     status = "200"
     target = "/index.html"
   }
-
-  # OAuth token for GitHub (if using GitHub)
-  # Note: You'll need to provide this via terraform.tfvars or as an environment variable
-  # oauth_token = var.github_oauth_token  # Uncomment if using GitHub
 
   tags = {
     Project = var.project_name
