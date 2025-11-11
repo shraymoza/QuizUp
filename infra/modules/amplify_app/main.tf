@@ -41,13 +41,24 @@ resource "aws_amplify_webhook" "main" {
 }
 resource "null_resource" "trigger_build" {
   provisioner "local-exec" {
-    command = "aws amplify start-job --app-id ${aws_amplify_app.web.id} --branch-name ${aws_amplify_branch.main.branch_name} --job-type RELEASE"
+    # Check build status first; only start if nothing is pending
+    command = <<EOT
+      for /f "tokens=*" %%i in ('aws amplify list-jobs --app-id ${aws_amplify_app.web.id} --branch-name ${aws_amplify_branch.main.branch_name} --query "jobSummaries[0].status" --output text') do set STATUS=%%i
+      if /I "%STATUS%"=="PENDING" (
+          echo "A job is already pending, skipping trigger."
+      ) else (
+          aws amplify start-job --app-id ${aws_amplify_app.web.id} --branch-name ${aws_amplify_branch.main.branch_name} --job-type RELEASE
+      )
+    EOT
+    interpreter = ["cmd", "/C"]
   }
 
+  # only re-run when code actually changes
   triggers = {
-    build = timestamp()
+    build = filesha1("${path.root}/../frontend/package.json")
   }
 }
+
 
 
 
