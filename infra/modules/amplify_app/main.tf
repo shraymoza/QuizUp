@@ -41,15 +41,15 @@ resource "aws_amplify_webhook" "main" {
 }
 resource "null_resource" "trigger_build" {
   provisioner "local-exec" {
-    # Wrap URL in double quotes to handle '&' safely in PowerShell
-    command = "curl -s -X POST \"${aws_amplify_webhook.main.url}\""
-    interpreter = ["PowerShell", "-Command"]
+    # explicitly call curl.exe so PowerShell doesn’t use Invoke-WebRequest
+    command = "cmd /C curl.exe -X POST \"${aws_amplify_webhook.main.url}\""
   }
 
   triggers = {
     build = timestamp()
   }
 }
+
 
 
 output "amplify_url" {
