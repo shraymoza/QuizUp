@@ -1,16 +1,13 @@
-output "website_url" {
-  value       = aws_s3_bucket_website_configuration.site_www.website_endpoint
-  description = "Your static website URL (S3 website endpoint)"
-}
+# S3 website outputs removed - using Amplify for hosting now
 
 output "hosted_ui_login_url" {
-  value       = "https://${aws_cognito_user_pool_domain.domain.domain}.auth.${var.region}.amazoncognito.com/login?client_id=${aws_cognito_user_pool_client.client.id}&response_type=token&scope=openid+email+profile&redirect_uri=${urlencode(aws_s3_bucket_website_configuration.site_www.website_endpoint)}"
-  description = "Cognito Hosted UI Login / Signup URL"
+  value       = length(aws_amplify_app.quizup) > 0 ? "https://${aws_cognito_user_pool_domain.domain.domain}.auth.${var.region}.amazoncognito.com/login?client_id=${aws_cognito_user_pool_client.client.id}&response_type=token&scope=openid+email+profile&redirect_uri=${urlencode("https://${aws_amplify_branch.main[0].branch_name}.${aws_amplify_app.quizup[0].default_domain}")}" : "Not configured - set amplify_repository_url variable"
+  description = "Cognito Hosted UI Login / Signup URL (using Amplify domain)"
 }
 
 output "hosted_ui_logout_url" {
-  value       = "https://${aws_cognito_user_pool_domain.domain.domain}.auth.${var.region}.amazoncognito.com/logout?client_id=${aws_cognito_user_pool_client.client.id}&logout_uri=${urlencode(aws_s3_bucket_website_configuration.site_www.website_endpoint)}"
-  description = "Cognito Hosted UI Logout URL"
+  value       = length(aws_amplify_app.quizup) > 0 ? "https://${aws_cognito_user_pool_domain.domain.domain}.auth.${var.region}.amazoncognito.com/logout?client_id=${aws_cognito_user_pool_client.client.id}&logout_uri=${urlencode("https://${aws_amplify_branch.main[0].branch_name}.${aws_amplify_app.quizup[0].default_domain}")}" : "Not configured - set amplify_repository_url variable"
+  description = "Cognito Hosted UI Logout URL (using Amplify domain)"
 }
 
 output "api_base_url" {

@@ -35,22 +35,36 @@ resource "null_resource" "update_cognito_callbacks" {
         "http://localhost:8080"
       )
       
-      # Combine all URLs
-      $allCallbackUrls = $localhostUrls + @($amplifyUrl1, $amplifyUrl2)
-      $allLogoutUrls = $localhostUrls + @($amplifyUrl1, $amplifyUrl2)
-      
-      $callbackUrlsString = $allCallbackUrls -join ","
-      $logoutUrlsString = $allLogoutUrls -join ","
+      # Combine all URLs (remove duplicates)
+      $allCallbackUrls = ($localhostUrls + @($amplifyUrl1, $amplifyUrl2)) | Select-Object -Unique
+      $allLogoutUrls = ($localhostUrls + @($amplifyUrl1, $amplifyUrl2)) | Select-Object -Unique
       
       Write-Host "Updating Cognito callback URLs..." -ForegroundColor Green
-      Write-Host "Callback URLs: $callbackUrlsString" -ForegroundColor Cyan
+      Write-Host "Callback URLs:" -ForegroundColor Cyan
+      $allCallbackUrls | ForEach-Object { Write-Host "  - $_" -ForegroundColor Cyan }
       
-      aws cognito-idp update-user-pool-client `
-        --user-pool-id ${aws_cognito_user_pool.pool.id} `
-        --client-id ${aws_cognito_user_pool_client.client.id} `
-        --callback-urls $callbackUrlsString `
-        --logout-urls $logoutUrlsString `
-        --region ${var.region}
+      # Build AWS CLI arguments - each URL must be passed separately
+      $awsArgs = @(
+        "cognito-idp",
+        "update-user-pool-client",
+        "--user-pool-id", "${aws_cognito_user_pool.pool.id}",
+        "--client-id", "${aws_cognito_user_pool_client.client.id}",
+        "--region", "${var.region}"
+      )
+      
+      # Add each callback URL as a separate --callback-urls argument
+      foreach ($url in $allCallbackUrls) {
+        $awsArgs += "--callback-urls"
+        $awsArgs += $url
+      }
+      
+      # Add each logout URL as a separate --logout-urls argument
+      foreach ($url in $allLogoutUrls) {
+        $awsArgs += "--logout-urls"
+        $awsArgs += $url
+      }
+      
+      & aws $awsArgs
       
       if ($LASTEXITCODE -eq 0) {
         Write-Host "Successfully updated Cognito callback URLs!" -ForegroundColor Green

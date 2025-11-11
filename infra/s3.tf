@@ -19,45 +19,17 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "quizup_sse" {
   }
 }
 
-# Block public ACLs/policies except for the website endpoint
+# Block public access - bucket is now private (only used for Lambda storage)
 resource "aws_s3_bucket_public_access_block" "quizup_block" {
   bucket                  = aws_s3_bucket.quizup.id
-  block_public_acls       = false
-  block_public_policy     = false
-  ignore_public_acls      = false
-  restrict_public_buckets = false
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets  = true
 }
 
-# Allow public read only for website objects
-data "aws_iam_policy_document" "public_read" {
-  statement {
-    effect = "Allow"
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-    actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.quizup.arn}/*"]
-  }
-}
-
-resource "aws_s3_bucket_policy" "public_read" {
-  bucket = aws_s3_bucket.quizup.id
-  policy = data.aws_iam_policy_document.public_read.json
-}
-
-# Enable static website hosting
-resource "aws_s3_bucket_website_configuration" "site_www" {
-  bucket = aws_s3_bucket.quizup.id
-
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "index.html"
-  }
-}
+# Note: Public read policy and website configuration removed
+# The bucket is now private and only used for Lambda function storage
 
 # Optional: create logical folders for organization
 locals {
