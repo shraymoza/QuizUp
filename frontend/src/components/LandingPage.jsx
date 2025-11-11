@@ -74,7 +74,7 @@ function LandingPage({ onAuthSuccess }) {
           <div className="feature-card">
             <div className="feature-icon">🏆</div>
             <h3>Track Progress</h3>
-            <p>Monitor your performance and improve over time</p>
+            <p>Monitor your performance and improve over timing</p>
           </div>
         </div>
       </div>
