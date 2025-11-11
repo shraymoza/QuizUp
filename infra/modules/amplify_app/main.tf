@@ -41,13 +41,14 @@ resource "aws_amplify_webhook" "main" {
 }
 resource "null_resource" "trigger_build" {
   provisioner "local-exec" {
-    command = "cmd /C curl.exe -X POST ${replace(aws_amplify_webhook.main.url, \"&\", \"^&\")}"
+    command = "aws amplify start-job --app-id ${aws_amplify_app.web.id} --branch-name ${aws_amplify_branch.main.branch_name} --job-type RELEASE"
   }
 
   triggers = {
     build = timestamp()
   }
 }
+
 
 
 
