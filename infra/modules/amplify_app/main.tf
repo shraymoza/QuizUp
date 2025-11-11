@@ -25,9 +25,11 @@ resource "aws_amplify_app" "web" {
   YAML
 
   environment_variables = {
-    NODE_ENV = "production"
+    NODE_ENV      = "production"
+    AMPLIFY_MONOREPO_APP_ROOT = "frontend"
   }
 }
+
 
 
 resource "aws_amplify_branch" "main" {
