@@ -1,6 +1,6 @@
 resource "aws_amplify_app" "web" {
   name         = "quizup-web"
-  repository   = var.repo_url
+  repository   = var.github_repo
   access_token = var.github_token
 
   build_spec = <<-YAML
@@ -29,7 +29,7 @@ resource "aws_amplify_app" "web" {
 
 resource "aws_amplify_branch" "main" {
   app_id      = aws_amplify_app.web.id
-  branch_name = var.repo_branch
+  branch_name = var.branch_name
   enable_auto_build = true
   framework         = "React"
   stage             = "PRODUCTION"

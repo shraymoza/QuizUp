@@ -1,4 +1,4 @@
-﻿repo_url     = "https://github.com/shraymoza/QuizUp"
+github_repo  = "https://github.com/shraymoza/QuizUp"
 repo_branch  = "main"
 frontend_dir = "frontend"
-github_token = "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"
+github_token = "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"

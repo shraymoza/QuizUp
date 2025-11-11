@@ -10,10 +10,14 @@ terraform {
 
 
 module "amplify_app" {
-  source        = "./modules/amplify_app"
-  github_token  = var.github_token
-  repo_url      = var.repo_url
-  repo_branch   = var.repo_branch
-  frontend_dir  = var.frontend_dir
+  source = "./modules/amplify_app"
+
+  aws_region           = var.aws_region
+  app_name             = var.app_name
+  branch_name          = var.branch_name
+  github_repo          = var.github_repo
+  github_token         = var.github_token
+  cognito_user_pool_id = var.cognito_user_pool_id
+  cognito_client_id    = var.cognito_client_id
 }
 

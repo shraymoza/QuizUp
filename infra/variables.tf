@@ -1,29 +1,40 @@
-variable "project_name" {
-  type    = string
-  default = "quizup"
-}
-
-variable "region" {
-  type    = string
-  default = "us-east-1"
-}
-
-variable "amplify_repository_url" {
+variable "aws_region" {
+  description = "AWS region"
   type        = string
-  description = "Git repository URL for Amplify (e.g., https://github.com/user/repo.git)"
+  default     = "us-east-1"
 }
 
-variable "github_token" {
+variable "app_name" {
+  description = "Amplify app name"
   type        = string
-  description = "GitHub token"
-  sensitive   = true
+  default     = "quizup-web"
 }
 
 variable "branch_name" {
+  description = "Git branch"
   type        = string
-  description = "Git branch to build"
   default     = "main"
 }
 
+variable "github_repo" {
+  description = "GitHub repository URL"
+  type        = string
+}
 
+variable "github_token" {
+  description = "GitHub Personal Access Token"
+  type        = string
+  sensitive   = true
+}
 
+variable "cognito_user_pool_id" {
+  description = "Optional Cognito User Pool ID"
+  type        = string
+  default     = ""
+}
+
+variable "cognito_client_id" {
+  description = "Optional Cognito App Client ID"
+  type        = string
+  default     = ""
+}
