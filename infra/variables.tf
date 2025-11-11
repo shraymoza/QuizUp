@@ -8,30 +8,21 @@ variable "region" {
   default = "us-east-1"
 }
 
-variable "bucket_name" {
-  type = string
-}
-
-variable "sm_endpoint_name" {
-  type    = string
-  default = "quizup-sm-endpoint"
-}
-
 variable "amplify_repository_url" {
   type        = string
-  description = "Git repository URL for Amplify (e.g., https://github.com/username/quizup.git)"
-  default     = ""
+  description = "Git repository URL for Amplify (e.g., https://github.com/user/repo.git)"
 }
 
 variable "github_oauth_token" {
   type        = string
-  description = "GitHub OAuth token for Amplify (optional, only if using GitHub)"
-  default     = ""
+  description = "GitHub OAuth token"
   sensitive   = true
 }
 
-variable "custom_domain" {
+variable "branch_name" {
   type        = string
-  description = "Custom domain for Amplify app (optional)"
-  default     = ""
+  description = "Git branch to build"
+  default     = "main"
 }
+
+
