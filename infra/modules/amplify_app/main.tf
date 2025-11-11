@@ -10,10 +10,9 @@ resource "aws_amplify_app" "web" {
         preBuild:
           commands:
             - cd frontend
-            - npm install
+            - npm install --include=dev
         build:
           commands:
-            - cd frontend
             - npm run build
       artifacts:
         baseDirectory: frontend/dist
@@ -25,10 +24,12 @@ resource "aws_amplify_app" "web" {
   YAML
 
   environment_variables = {
-    NODE_ENV      = "production"
-    AMPLIFY_MONOREPO_APP_ROOT = "frontend"
+    NODE_ENV = "development"
   }
 }
+
+
+
 
 
 
