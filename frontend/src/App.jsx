@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Amplify } from 'aws-amplify'
 import { getCurrentUser, signOut } from 'aws-amplify/auth'
-import { awsConfig } from './aws-config'
 import LandingPage from './components/LandingPage'
 import Dashboard from './components/Dashboard'
 import './App.css'
-
-// Configure Amplify
-Amplify.configure(awsConfig)
 
 function App() {
   const [user, setUser] = useState(null)
