@@ -8,7 +8,7 @@ const userPoolClientId = import.meta.env.VITE_CLIENT_ID || import.meta.env.VITE_
 const domain = import.meta.env.VITE_COGNITO_DOMAIN
 const redirectUri = import.meta.env.VITE_REDIRECT_URI || window.location.origin
 
-// Validate required configuration
+// Validate required configuration (non-blocking - log warning but don't throw)
 if (!userPoolId || !userPoolClientId) {
   console.error('Cognito configuration missing:', {
     userPoolId: userPoolId || 'MISSING',
@@ -26,7 +26,7 @@ if (!userPoolId || !userPoolClientId) {
       VITE_REDIRECT_URI: import.meta.env.VITE_REDIRECT_URI,
     }
   })
-  throw new Error('Auth UserPool not configured. Missing required environment variables.')
+  console.warn('App will continue to load, but authentication features will not work until environment variables are configured.')
 }
 
 // Construct full Cognito domain if only domain name is provided
@@ -37,34 +37,39 @@ if (domain && !domain.includes('http') && !domain.includes('amazoncognito.com'))
   cognitoDomain = `https://${domain}`
 }
 
-const amplifyConfig = {
-  Auth: {
-    Cognito: {
-      userPoolId,
-      userPoolClientId,
-      loginWith: { email: true },
+// Only configure Amplify if we have the required values
+if (userPoolId && userPoolClientId) {
+  const amplifyConfig = {
+    Auth: {
+      Cognito: {
+        userPoolId,
+        userPoolClientId,
+        loginWith: { email: true },
+      },
     },
-  },
-  region,
-}
-
-// Only add OAuth config if domain is provided
-if (cognitoDomain) {
-  amplifyConfig.Auth.Cognito.oauth = {
-    domain: cognitoDomain,
-    scopes: ['email', 'openid', 'profile'],
-    redirectSignIn: redirectUri,
-    redirectSignOut: redirectUri,
-    responseType: 'token',
+    region,
   }
+
+  // Only add OAuth config if domain is provided
+  if (cognitoDomain) {
+    amplifyConfig.Auth.Cognito.oauth = {
+      domain: cognitoDomain,
+      scopes: ['email', 'openid', 'profile'],
+      redirectSignIn: redirectUri,
+      redirectSignOut: redirectUri,
+      responseType: 'token',
+    }
+  }
+
+  Amplify.configure(amplifyConfig)
+
+  console.log('Amplify configured successfully:', {
+    region,
+    userPoolId,
+    userPoolClientId: userPoolClientId?.substring(0, 10) + '...',
+    domain: cognitoDomain || 'Not configured',
+    redirectUri,
+  })
+} else {
+  console.warn('Amplify not configured - missing required Cognito credentials')
 }
-
-Amplify.configure(amplifyConfig)
-
-console.log('Amplify configured successfully:', {
-  region,
-  userPoolId,
-  userPoolClientId: userPoolClientId?.substring(0, 10) + '...',
-  domain: cognitoDomain || 'Not configured',
-  redirectUri,
-})
