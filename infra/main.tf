@@ -75,15 +75,12 @@ resource "null_resource" "update_amplify_env_vars" {
         "VITE_REDIRECT_URI"   = $amplifyUrl
       }
       
-      $envVarArgs = @()
-      foreach ($key in $envVars.Keys) {
-        $envVarArgs += "$key=$($envVars[$key])"
-      }
+      $envVarJson = ($envVars | ConvertTo-Json -Compress) -replace '"', '\"'
       
       aws amplify update-branch `
         --app-id $appId `
         --branch-name $branchName `
-        --environment-variables $envVarArgs | Out-Null
+        --environment-variables $envVarJson | Out-Null
       
       Write-Host "Updated Amplify environment variables for branch: $branchName"
     EOT
