@@ -26,21 +26,22 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 resource "aws_cognito_user_pool_client" "client" {
-  name         = "${var.project_name}-web"
-  user_pool_id = aws_cognito_user_pool.pool.id
-
-  allowed_oauth_flows                  = ["implicit"]
-  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  name         = "${var.project_name}-client"
+  user_pool_id = aws_cognito_user_pool.users.id
+  generate_secret = false
   allowed_oauth_flows_user_pool_client = true
-  supported_identity_providers         = ["COGNITO"]
-  generate_secret                      = false
-  explicit_auth_flows = [
-    "ALLOW_USER_PASSWORD_AUTH",
-    "ALLOW_REFRESH_TOKEN_AUTH"
-  ]
+  allowed_oauth_flows = ["implicit"]
+  allowed_oauth_scopes = ["openid", "email", "profile"]
+  supported_identity_providers = ["COGNITO"]
 
-  callback_urls = var.callback_urls
-  logout_urls   = var.logout_urls
+  callback_urls = [
+    "http://localhost:3000",
+    "https://${var.amplify_domain}",      # ADD THIS
+  ]
+  logout_urls = [
+    "http://localhost:3000",
+    "https://${var.amplify_domain}",      # ADD THIS
+  ]
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {

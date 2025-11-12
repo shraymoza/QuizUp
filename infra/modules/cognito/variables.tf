@@ -28,5 +28,10 @@ variable "logout_urls" {
     "http://localhost:8080"
   ]
 }
+variable "amplify_domain" {
+  description = "Amplify app domain"
+  type        = string
+}
+
 
 

@@ -1,21 +1,27 @@
-// AWS Amplify Configuration
-// Replace these values with your actual Cognito User Pool ID and Client ID
-// You can get these from Terraform outputs: terraform output cognito_user_pool_id and cognito_client_id
+// AWS Amplify v6 Configuration
+import { Amplify } from 'aws-amplify'
 
-const userPoolId = import.meta.env.VITE_COGNITO_USER_POOL_ID || 'YOUR_USER_POOL_ID'
-const userPoolClientId = import.meta.env.VITE_COGNITO_CLIENT_ID || 'YOUR_CLIENT_ID'
+// Fetch variables from .env (injected by Terraform or Amplify Console)
 const region = import.meta.env.VITE_AWS_REGION || 'us-east-1'
+const userPoolId = import.meta.env.VITE_USER_POOL_ID || import.meta.env.VITE_COGNITO_USER_POOL_ID
+const userPoolClientId = import.meta.env.VITE_CLIENT_ID || import.meta.env.VITE_COGNITO_CLIENT_ID
+const domain = import.meta.env.VITE_COGNITO_DOMAIN
+const redirectUri = import.meta.env.VITE_REDIRECT_URI || 'http://localhost:3000'
 
-export const awsConfig = {
+Amplify.configure({
   Auth: {
     Cognito: {
-      userPoolId: userPoolId,
-      userPoolClientId: userPoolClientId,
-      loginWith: {
-        email: true,
+      userPoolId,
+      userPoolClientId,
+      loginWith: { email: true },
+      oauth: {
+        domain,
+        scopes: ['email', 'openid', 'profile'],
+        redirectSignIn: redirectUri,
+        redirectSignOut: redirectUri,
+        responseType: 'token',
       },
     },
   },
-  region: region,
-}
-
+  region,
+})

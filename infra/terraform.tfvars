@@ -1,4 +1,3 @@
-github_repo  = "https://github.com/shraymoza/QuizUp"
-repo_branch  = "main"
-frontend_dir = "frontend"
-github_token = "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"
+github_repo         = "https://github.com/shraymoza/QuizUp"
+github_token        = "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"
+recreate_on_session = true
