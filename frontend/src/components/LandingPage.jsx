@@ -26,13 +26,13 @@ function LandingPage({ onAuthSuccess }) {
   }, [])
 
   const handleSignInClick = () => {
-    setShowSignIn(true)
-    setShowSignUp(false)
+    // Skip authentication for now - go directly to dashboard
+    onAuthSuccess()
   }
 
   const handleSignUpClick = () => {
-    setShowSignUp(true)
-    setShowSignIn(false)
+    // Skip authentication for now - go directly to dashboard
+    onAuthSuccess()
   }
 
   const handleClose = () => {

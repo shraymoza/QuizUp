@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { getCurrentUser, signOut } from 'aws-amplify/auth'
 import LandingPage from './components/LandingPage'
 import Dashboard from './components/Dashboard'
 import './App.css'
@@ -9,27 +8,18 @@ function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    checkAuthStatus()
+    // Don't auto-login - start on landing page
+    setLoading(false)
   }, [])
 
-  const checkAuthStatus = async () => {
-    try {
-      const currentUser = await getCurrentUser()
-      setUser(currentUser)
-    } catch (error) {
-      setUser(null)
-    } finally {
-      setLoading(false)
-    }
+  const checkAuthStatus = () => {
+    // Skip authentication for now - set a mock user to go to dashboard
+    setUser({ username: 'guest', signInDetails: { loginId: 'guest@quizup.com' } })
   }
 
-  const handleSignOut = async () => {
-    try {
-      await signOut()
-      setUser(null)
-    } catch (error) {
-      console.error('Error signing out:', error)
-    }
+  const handleSignOut = () => {
+    // Skip authentication for now - just set user to null
+    setUser(null)
   }
 
   if (loading) {

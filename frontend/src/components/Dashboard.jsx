@@ -1,14 +1,9 @@
-import { signOut } from 'aws-amplify/auth'
 import './Dashboard.css'
 
 function Dashboard({ user, onSignOut }) {
   const handleSignOut = async () => {
-    try {
-      await signOut()
-      onSignOut()
-    } catch (error) {
-      console.error('Error signing out:', error)
-    }
+    // Skip authentication for now - just call onSignOut
+    onSignOut()
   }
 
   return (
@@ -23,9 +18,9 @@ function Dashboard({ user, onSignOut }) {
       <div className="dashboard-content">
         <div className="welcome-section">
           <h2>Welcome back!</h2>
-          <p className="user-email">{user.signInDetails?.loginId || user.username}</p>
+          <p className="user-email">{user?.signInDetails?.loginId || user?.username || 'Guest'}</p>
           <p className="welcome-message">
-            You're successfully authenticated. Ready to start quizzing?
+            Ready to start quizzing?
           </p>
         </div>
 
