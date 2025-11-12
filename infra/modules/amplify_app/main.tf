@@ -27,9 +27,9 @@ resource "aws_amplify_app" "web" {
   environment_variables = {
     NODE_ENV            = "production"
     VITE_AWS_REGION     = var.aws_region
-    VITE_USER_POOL_ID   = var.cognito_user_pool_id != "" ? var.cognito_user_pool_id : "PLACEHOLDER"
-    VITE_CLIENT_ID      = var.cognito_client_id != "" ? var.cognito_client_id : "PLACEHOLDER"
-    VITE_COGNITO_DOMAIN = var.cognito_domain != "" ? var.cognito_domain : "PLACEHOLDER"
+    VITE_USER_POOL_ID   = var.cognito_user_pool_id != "" ? var.cognito_user_pool_id : ""
+    VITE_CLIENT_ID      = var.cognito_client_id != "" ? var.cognito_client_id : ""
+    VITE_COGNITO_DOMAIN = var.cognito_domain != "" ? var.cognito_domain : ""
   }
 }
 

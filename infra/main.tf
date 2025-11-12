@@ -75,12 +75,27 @@ resource "null_resource" "update_amplify_env_vars" {
         "VITE_REDIRECT_URI"   = $amplifyUrl
       }
       
-      $envVarJson = ($envVars | ConvertTo-Json -Compress) -replace '"', '\"'
+      # Convert to JSON format
+      $envVarJson = $envVars | ConvertTo-Json -Compress
       
-      aws amplify update-branch `
-        --app-id $appId `
-        --branch-name $branchName `
-        --environment-variables $envVarJson | Out-Null
+      # Write to temp file without BOM (Byte Order Mark) in current directory
+      $tempFile = "amplify-env-vars-temp.json"
+      $utf8NoBom = New-Object System.Text.UTF8Encoding $false
+      [System.IO.File]::WriteAllText($tempFile, $envVarJson, $utf8NoBom)
+      
+      # Use relative path with file:// prefix
+      $fileUri = "file://$tempFile"
+      
+      try {
+        aws amplify update-branch `
+          --app-id $appId `
+          --branch-name $branchName `
+          --environment-variables $fileUri | Out-Null
+      } finally {
+        if (Test-Path $tempFile) {
+          Remove-Item $tempFile -Force
+        }
+      }
       
       Write-Host "Updated Amplify environment variables for branch: $branchName"
     EOT
