@@ -48,9 +48,51 @@ module "amplify_app" {
   cognito_domain       = module.cognito.cognito_domain
 }
 
+
+# Update Amplify environment variables with Cognito values after both are created
+resource "null_resource" "update_amplify_env_vars" {
+  depends_on = [module.amplify_app, module.cognito]
+
+  triggers = {
+    user_pool_id   = module.cognito.cognito_user_pool_id
+    client_id      = module.cognito.cognito_client_id
+    cognito_domain = module.cognito.cognito_domain
+    amplify_domain = module.amplify_app.amplify_app_default_domain
+  }
+
+  provisioner "local-exec" {
+    interpreter = ["PowerShell", "-Command"]
+    command     = <<EOT
+      $amplifyUrl = "https://${var.branch_name}.${module.amplify_app.amplify_app_default_domain}"
+      $appId = "${module.amplify_app.amplify_app_id}"
+      $branchName = "${var.branch_name}"
+      
+      $envVars = @{
+        "VITE_AWS_REGION"     = "${var.aws_region}"
+        "VITE_USER_POOL_ID"   = "${module.cognito.cognito_user_pool_id}"
+        "VITE_CLIENT_ID"      = "${module.cognito.cognito_client_id}"
+        "VITE_COGNITO_DOMAIN" = "${module.cognito.cognito_domain}"
+        "VITE_REDIRECT_URI"   = $amplifyUrl
+      }
+      
+      $envVarArgs = @()
+      foreach ($key in $envVars.Keys) {
+        $envVarArgs += "$key=$($envVars[$key])"
+      }
+      
+      aws amplify update-branch `
+        --app-id $appId `
+        --branch-name $branchName `
+        --environment-variables $envVarArgs | Out-Null
+      
+      Write-Host "Updated Amplify environment variables for branch: $branchName"
+    EOT
+  }
+}
+
 # Update Cognito callback URLs with Amplify URL after Amplify is deployed
 resource "null_resource" "update_cognito_urls" {
-  depends_on = [module.amplify_app]
+  depends_on = [module.amplify_app, module.cognito]
 
   triggers = {
     amplify_domain = module.amplify_app.amplify_app_default_domain

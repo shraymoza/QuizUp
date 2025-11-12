@@ -26,4 +26,8 @@ output "cognito_hosted_ui_logout_url" {
   value = module.cognito.cognito_hosted_ui_logout_url
 }
 
+output "cognito_domain" {
+  value = module.cognito.cognito_domain
+}
+
 
