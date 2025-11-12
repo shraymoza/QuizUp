@@ -1,37 +1,24 @@
 variable "project_name" {
-  description = "Project name prefix"
+  description = "Project name for naming resources"
   type        = string
 }
 
 variable "region" {
   description = "AWS region"
   type        = string
-  default     = "us-east-1"
 }
 
-variable "callback_urls" {
-  description = "List of OAuth2 callback URLs (e.g., localhost + Amplify URL)"
-  type        = list(string)
-  default     = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:8080"
-  ]
-}
-
-variable "logout_urls" {
-  description = "List of logout redirect URLs"
-  type        = list(string)
-  default     = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:8080"
-  ]
-}
 variable "amplify_domain" {
-  description = "Amplify app domain"
+  description = "Amplify domain for callback URLs"
   type        = string
 }
 
+variable "callback_urls" {
+  description = "List of callback URLs for Cognito user pool client"
+  type        = list(string)
+}
 
-
+variable "logout_urls" {
+  description = "List of logout URLs for Cognito user pool client"
+  type        = list(string)
+}

@@ -38,3 +38,14 @@ variable "cognito_client_id" {
   type        = string
   default     = ""
 }
+variable "project_name" {
+  description = "Project name"
+  type        = string
+  default     = "quizup"
+}
+
+variable "assume_role_arn" {
+  description = "ARN of IAM role to assume (e.g., LabRole for Learner Lab). Leave empty to use default credentials."
+  type        = string
+  default     = ""
+}

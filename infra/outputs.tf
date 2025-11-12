@@ -11,19 +11,19 @@ output "amplify_branch_url" {
 }
 
 output "cognito_user_pool_id" {
-  value = module.cognito.user_pool_id
+  value = module.cognito.cognito_user_pool_id
 }
 
 output "cognito_client_id" {
-  value = module.cognito.client_id
+  value = module.cognito.cognito_client_id
 }
 
 output "cognito_hosted_ui_login_url" {
-  value = module.cognito.hosted_ui_login_url
+  value = module.cognito.cognito_hosted_ui_login_url
 }
 
 output "cognito_hosted_ui_logout_url" {
-  value = module.cognito.hosted_ui_logout_url
+  value = module.cognito.cognito_hosted_ui_logout_url
 }
 
 
