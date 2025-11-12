@@ -37,4 +37,10 @@ variable "cognito_client_id" {
   default     = ""
 }
 
+variable "cognito_domain" {
+  description = "Cognito domain for OAuth"
+  type        = string
+  default     = ""
+}
+
 

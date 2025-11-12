@@ -10,9 +10,10 @@ resource "aws_amplify_app" "web" {
         preBuild:
           commands:
             - cd frontend
-            - npm install --include=dev
+            - npm ci
         build:
           commands:
+            - cd frontend
             - npm run build
       artifacts:
         baseDirectory: frontend/dist
@@ -24,7 +25,11 @@ resource "aws_amplify_app" "web" {
   YAML
 
   environment_variables = {
-    NODE_ENV = "development"
+    NODE_ENV                 = "production"
+    VITE_AWS_REGION          = var.aws_region
+    VITE_USER_POOL_ID        = var.cognito_user_pool_id
+    VITE_CLIENT_ID           = var.cognito_client_id
+    VITE_COGNITO_DOMAIN      = var.cognito_domain
   }
 }
 

@@ -45,6 +45,7 @@ module "amplify_app" {
   github_token         = var.github_token
   cognito_user_pool_id = module.cognito.cognito_user_pool_id
   cognito_client_id    = module.cognito.cognito_client_id
+  cognito_domain       = module.cognito.cognito_domain
 }
 
 # Update Cognito callback URLs with Amplify URL after Amplify is deployed
