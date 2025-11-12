@@ -1,0 +1,6 @@
+# Copy this file to terraform.tfvars and adjust values for your environment.
+
+environment = "dev"
+aws_region  = "us-east-1"
+aws_profile = "default"
+project_name = "quizup"
