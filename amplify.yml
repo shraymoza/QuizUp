@@ -3,118 +3,53 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "preBuild phase - Current directory:"
+        - echo "=== PREBUILD PHASE ==="
         - pwd
-        - echo "Listing files:"
         - ls -la
-        - echo "Environment variable VITE_API_BASE_URL:"
-        - echo $VITE_API_BASE_URL
+        - echo "VITE_API_BASE_URL=$VITE_API_BASE_URL"
         - |
-          # Determine the working directory and change to it
           if [ -f "package.json" ]; then
-            echo "✅ Already in frontend directory (package.json found)"
-            WORK_DIR="."
+            echo "✅ In frontend directory"
           elif [ -d "frontend" ]; then
-            echo "✅ frontend directory exists, changing to it..."
+            echo "✅ Changing to frontend..."
             cd frontend
-            WORK_DIR="frontend"
           else
-            echo "❌ ERROR: Neither package.json nor frontend directory found!"
-            echo "Current directory contents:"
-            ls -la
+            echo "❌ ERROR: frontend not found!"
             exit 1
           fi
-          echo "Current directory after check:"
-          pwd
-          echo "Verifying package.json exists:"
-          if [ ! -f "package.json" ]; then
-            echo "❌ package.json NOT found in current directory!"
-            exit 1
-          fi
-          echo "✅ package.json found"
-          echo "Installing dependencies..."
-          npm install
+        - pwd
+        - test -f package.json || (echo "❌ package.json not found!" && exit 1)
+        - echo "✅ Installing dependencies..."
+        - npm install
     build:
       commands:
+        - echo "=== BUILD PHASE START ==="
+        - pwd
         - |
-          # Build phase - all commands in one block to preserve directory changes
-          echo "Build phase - Current directory:"
-          pwd
-          echo "Listing files:"
-          ls -la
-          
-          # Determine working directory
           if [ -f "package.json" ]; then
-            echo "✅ Already in frontend directory (package.json found)"
-            BUILD_DIR="."
+            echo "✅ In frontend directory"
           elif [ -d "frontend" ]; then
-            echo "✅ Changing to frontend directory..."
+            echo "✅ Changing to frontend..."
             cd frontend
-            BUILD_DIR="frontend"
           else
-            echo "❌ ERROR: frontend directory not found!"
-            ls -la
+            echo "❌ ERROR: frontend not found!"
             exit 1
           fi
-          
-          echo "Current directory after check:"
-          pwd
-          echo "Verifying package.json:"
-          if [ ! -f "package.json" ]; then
-            echo "❌ package.json NOT found!"
-            exit 1
-          fi
-          echo "✅ package.json found"
-          
-          echo "Environment variable VITE_API_BASE_URL:"
-          echo $VITE_API_BASE_URL
-          
-          # Export environment variable for Vite build
-          # Vite only reads environment variables at build time, not runtime
+        - pwd
+        - test -f package.json || (echo "❌ package.json not found!" && exit 1)
+        - echo "VITE_API_BASE_URL before export: $VITE_API_BASE_URL"
+        - |
           if [ -z "$VITE_API_BASE_URL" ]; then
             echo "❌ ERROR: VITE_API_BASE_URL is not set!"
-            echo "This environment variable must be set in Amplify Console"
-            echo "Go to: App settings → Environment variables"
             exit 1
           fi
-          
-          export VITE_API_BASE_URL
-          echo "✅ VITE_API_BASE_URL exported for build: $VITE_API_BASE_URL"
-          
-          echo "Building application..."
-          echo "Running: npm run build"
-          npm run build
-          BUILD_EXIT_CODE=$?
-          
-          if [ $BUILD_EXIT_CODE -ne 0 ]; then
-            echo "❌ ERROR: npm run build failed with exit code $BUILD_EXIT_CODE!"
-            echo "Current directory:"
-            pwd
-            echo "Directory contents:"
-            ls -la
-            exit 1
-          fi
-          
-          echo "Build command completed successfully!"
-          echo "Current directory: $(pwd)"
-          echo "Checking for dist directory..."
-          ls -la
-          
-          # Verify dist directory was created
-          if [ -d "dist" ]; then
-            echo "✅ dist directory found in current directory"
-            ls -la dist
-          elif [ -d "frontend/dist" ]; then
-            echo "✅ dist directory found in frontend/dist"
-            ls -la frontend/dist
-          else
-            echo "❌ ERROR: dist directory not found after build!"
-            echo "Current directory:"
-            pwd
-            echo "Directory contents:"
-            ls -la
-            exit 1
-          fi
+        - export VITE_API_BASE_URL
+        - echo "✅ VITE_API_BASE_URL=$VITE_API_BASE_URL"
+        - echo "Building with Vite..."
+        - npm run build
+        - echo "Build complete. Checking dist..."
+        - ls -la dist || (echo "❌ dist not found!" && exit 1)
+        - echo "=== BUILD PHASE END ==="
   artifacts:
     baseDirectory: frontend/dist
     files:
