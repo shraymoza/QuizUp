@@ -1,28 +1,43 @@
 import { Amplify } from 'aws-amplify';
 import { signIn, signOut, signUp, confirmSignUp, resendSignUpCode, getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 
-// Configure Amplify with Cognito
-const cognitoConfig = {
-  Auth: {
-    Cognito: {
-      userPoolId: import.meta.env.VITE_COGNITO_USER_POOL_ID,
-      userPoolClientId: import.meta.env.VITE_COGNITO_CLIENT_ID,
-      region: import.meta.env.VITE_COGNITO_REGION || 'us-east-1',
-      loginWith: {
-        oauth: {
-          domain: import.meta.env.VITE_COGNITO_DOMAIN,
-          scopes: ['email', 'openid', 'profile'],
-          redirectSignIn: [window.location.origin],
-          redirectSignOut: [window.location.origin],
-          responseType: 'code',
-        },
+// Get environment variables with fallbacks
+const getUserPoolId = () => import.meta.env.VITE_COGNITO_USER_POOL_ID || '';
+const getClientId = () => import.meta.env.VITE_COGNITO_CLIENT_ID || '';
+const getRegion = () => import.meta.env.VITE_COGNITO_REGION || 'us-east-1';
+const getDomain = () => import.meta.env.VITE_COGNITO_DOMAIN || '';
+
+// Configure Amplify with Cognito (only if required values are present)
+const userPoolId = getUserPoolId();
+const clientId = getClientId();
+const region = getRegion();
+const domain = getDomain();
+
+if (userPoolId && clientId) {
+  const cognitoConfig = {
+    Auth: {
+      Cognito: {
+        userPoolId: userPoolId,
+        userPoolClientId: clientId,
+        region: region,
+        loginWith: domain ? {
+          oauth: {
+            domain: domain,
+            scopes: ['email', 'openid', 'profile'],
+            redirectSignIn: [window.location.origin],
+            redirectSignOut: [window.location.origin],
+            responseType: 'code',
+          },
+        } : undefined,
       },
     },
-  },
-};
+  };
 
-// Initialize Amplify
-Amplify.configure(cognitoConfig);
+  // Initialize Amplify
+  Amplify.configure(cognitoConfig);
+} else {
+  console.warn('Cognito configuration incomplete. Some environment variables may be missing.');
+}
 
 // Export auth functions
 export { signIn, signOut, signUp, confirmSignUp, resendSignUpCode, getCurrentUser, fetchAuthSession };
