@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getIdToken } from "./auth";
 
 // API Gateway URL - Update this if your API URL changes
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "https://uk6ks80k8i.execute-api.us-east-1.amazonaws.com/api";
@@ -10,6 +11,20 @@ const client = axios.create({
   // For JSON requests, axios will set application/json
   // For FormData, axios will set multipart/form-data with boundary
 });
+
+// Add request interceptor to include JWT token
+client.interceptors.request.use(
+  async (config) => {
+    const token = await getIdToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 /**
  * Upload document and generate study notes or quiz

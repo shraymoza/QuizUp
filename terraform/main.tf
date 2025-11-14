@@ -39,6 +39,11 @@ module "auth" {
   environment  = var.environment
   project_name = var.project_name
   tags         = local.tags
+
+  # Default callback/logout URLs (can be updated later with Amplify URL)
+  # Note: Amplify URL will be added after deployment via Terraform update or manually in Cognito Console
+  callback_urls = ["http://localhost:5173", "http://localhost:3000"]
+  logout_urls   = ["http://localhost:5173", "http://localhost:3000"]
 }
 
 module "ml" {
@@ -98,8 +103,13 @@ module "amplify" {
   branch_name    = var.amplify_branch_name
 
   environment_variables = {
-    VITE_API_BASE_URL = module.api.lambda_function_url
+    VITE_API_BASE_URL           = module.api.lambda_function_url
+    VITE_COGNITO_USER_POOL_ID   = module.auth.user_pool_id
+    VITE_COGNITO_CLIENT_ID      = module.auth.user_pool_client_id
+    VITE_COGNITO_REGION         = var.aws_region
+    VITE_COGNITO_DOMAIN         = module.auth.user_pool_domain
+    VITE_COGNITO_HOSTED_UI_URL = module.auth.hosted_ui_url
   }
 
-  depends_on = [module.api]
+  depends_on = [module.api, module.auth]
 }
