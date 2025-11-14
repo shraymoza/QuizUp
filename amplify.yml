@@ -10,24 +10,30 @@ frontend:
         - echo "Environment variable VITE_API_BASE_URL:"
         - echo $VITE_API_BASE_URL
         - |
-          # Check if we're already in the frontend directory (package.json exists)
+          # Determine the working directory and change to it
           if [ -f "package.json" ]; then
             echo "✅ Already in frontend directory (package.json found)"
-            FRONTEND_DIR="."
+            WORK_DIR="."
           elif [ -d "frontend" ]; then
             echo "✅ frontend directory exists, changing to it..."
             cd frontend
-            FRONTEND_DIR="frontend"
+            WORK_DIR="frontend"
           else
             echo "❌ ERROR: Neither package.json nor frontend directory found!"
             echo "Current directory contents:"
             ls -la
             exit 1
           fi
-        - echo "Current directory after check:"
-        - pwd
-        - echo "Installing dependencies..."
-        - npm ci || npm install
+          echo "Current directory after check:"
+          pwd
+          echo "Verifying package.json exists:"
+          if [ ! -f "package.json" ]; then
+            echo "❌ package.json NOT found in current directory!"
+            exit 1
+          fi
+          echo "✅ package.json found"
+          echo "Installing dependencies..."
+          npm install
     build:
       commands:
         - echo "Build phase - Current directory:"
@@ -35,26 +41,32 @@ frontend:
         - echo "Listing files:"
         - ls -la
         - |
-          # Check if we're already in the frontend directory (package.json exists)
+          # Determine the working directory and change to it
           if [ -f "package.json" ]; then
             echo "✅ Already in frontend directory (package.json found)"
-            FRONTEND_DIR="."
+            WORK_DIR="."
           elif [ -d "frontend" ]; then
             echo "✅ frontend directory exists, changing to it..."
             cd frontend
-            FRONTEND_DIR="frontend"
+            WORK_DIR="frontend"
           else
             echo "❌ ERROR: Neither package.json nor frontend directory found!"
             echo "Current directory contents:"
             ls -la
             exit 1
           fi
-        - echo "Current directory after check:"
-        - pwd
-        - echo "Environment variable VITE_API_BASE_URL:"
-        - echo $VITE_API_BASE_URL
-        - echo "Building application..."
-        - npm run build
+          echo "Current directory after check:"
+          pwd
+          echo "Verifying package.json exists:"
+          if [ ! -f "package.json" ]; then
+            echo "❌ package.json NOT found in current directory!"
+            exit 1
+          fi
+          echo "✅ package.json found"
+          echo "Environment variable VITE_API_BASE_URL:"
+          echo $VITE_API_BASE_URL
+          echo "Building application..."
+          npm run build
   artifacts:
     baseDirectory: dist
     files:
