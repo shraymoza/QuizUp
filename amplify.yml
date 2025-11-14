@@ -3,17 +3,35 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Node version:"
-        - node --version
-        - echo "NPM version:"
-        - npm --version
-        - cd frontend
-        - npm ci || npm install
+        - echo "Current directory:"
+        - pwd
+        - echo "Listing files in root:"
+        - ls -la
         - echo "Environment variable VITE_API_BASE_URL:"
         - echo $VITE_API_BASE_URL
+        - echo "Checking if frontend directory exists:"
+        - test -d frontend && echo "✅ frontend directory exists" || (echo "❌ frontend directory does NOT exist" && ls -la && exit 1)
+        - echo "Changing to frontend directory..."
+        - cd frontend || (echo "Failed to cd into frontend directory" && exit 1)
+        - echo "Current directory after cd:"
+        - pwd
+        - echo "Installing dependencies..."
+        - npm ci || npm install
     build:
       commands:
-        - cd frontend
+        - echo "Build phase - Current directory:"
+        - pwd
+        - echo "Listing files in root:"
+        - ls -la
+        - echo "Checking if frontend directory exists:"
+        - test -d frontend && echo "✅ frontend directory exists" || (echo "❌ frontend directory does NOT exist in build phase" && ls -la && exit 1)
+        - echo "Changing to frontend directory..."
+        - cd frontend || (echo "Failed to cd into frontend directory in build phase" && exit 1)
+        - echo "Current directory after cd:"
+        - pwd
+        - echo "Environment variable VITE_API_BASE_URL:"
+        - echo $VITE_API_BASE_URL
+        - echo "Building application..."
         - npm run build
   artifacts:
     baseDirectory: frontend/dist
