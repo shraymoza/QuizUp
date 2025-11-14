@@ -17,7 +17,7 @@ terraform.tfplan
 
 # Amplify and build artifacts
 amplify/
-dist/
+
 build/
 node_modules/
 .cache/
