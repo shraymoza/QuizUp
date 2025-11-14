@@ -36,11 +36,13 @@ frontend:
           npm install
     build:
       commands:
-        - echo "Build phase - Current directory:"
-        - pwd
-        - echo "Listing files:"
-        - ls -la
         - |
+          # Build phase - determine working directory and build
+          echo "Build phase - Current directory:"
+          pwd
+          echo "Listing files:"
+          ls -la
+          
           # Determine the working directory and change to it
           if [ -f "package.json" ]; then
             echo "✅ Already in frontend directory (package.json found)"
@@ -55,6 +57,7 @@ frontend:
             ls -la
             exit 1
           fi
+          
           echo "Current directory after check:"
           pwd
           echo "Verifying package.json exists:"
@@ -67,6 +70,16 @@ frontend:
           echo $VITE_API_BASE_URL
           echo "Building application..."
           npm run build
+          
+          echo "Verifying dist directory was created:"
+          if [ ! -d "dist" ]; then
+            echo "❌ ERROR: dist directory was NOT created after build!"
+            echo "Current directory contents:"
+            ls -la
+            exit 1
+          fi
+          echo "✅ dist directory created successfully"
+          ls -la dist
   artifacts:
     baseDirectory: dist
     files:
