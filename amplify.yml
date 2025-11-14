@@ -6,7 +6,7 @@ frontend:
         - echo "=== PREBUILD PHASE ==="
         - pwd
         - ls -la
-        - echo "VITE_API_BASE_URL=$VITE_API_BASE_URL"
+        - 'echo "VITE_API_BASE_URL=$VITE_API_BASE_URL"'
         - |
           if [ -f "package.json" ]; then
             echo "✅ In frontend directory"
@@ -18,7 +18,7 @@ frontend:
             exit 1
           fi
         - pwd
-        - test -f package.json || (echo "❌ package.json not found!" && exit 1)
+        - 'test -f package.json || (echo "❌ package.json not found!" && exit 1)'
         - echo "✅ Installing dependencies..."
         - npm install
     build:
@@ -36,19 +36,19 @@ frontend:
             exit 1
           fi
         - pwd
-        - test -f package.json || (echo "❌ package.json not found!" && exit 1)
-        - echo "VITE_API_BASE_URL before export: $VITE_API_BASE_URL"
+        - 'test -f package.json || (echo "❌ package.json not found!" && exit 1)'
+        - 'echo "VITE_API_BASE_URL before export: $VITE_API_BASE_URL"'
         - |
           if [ -z "$VITE_API_BASE_URL" ]; then
             echo "❌ ERROR: VITE_API_BASE_URL is not set!"
             exit 1
           fi
         - export VITE_API_BASE_URL
-        - echo "✅ VITE_API_BASE_URL=$VITE_API_BASE_URL"
+        - 'echo "✅ VITE_API_BASE_URL=$VITE_API_BASE_URL"'
         - echo "Building with Vite..."
         - npm run build
         - echo "Build complete. Checking dist..."
-        - ls -la dist || (echo "❌ dist not found!" && exit 1)
+        - 'ls -la dist || (echo "❌ dist not found!" && exit 1)'
         - echo "=== BUILD PHASE END ==="
   artifacts:
     baseDirectory: frontend/dist
