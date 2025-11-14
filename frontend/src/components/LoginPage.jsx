@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { signIn, signUp, confirmSignUp, resendSignUpCode } from '../services/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 export function LoginPage() {
   const [mode, setMode] = useState('signin'); // 'signin' or 'signup'
@@ -10,6 +12,8 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [needsConfirmation, setNeedsConfirmation] = useState(false);
+  const navigate = useNavigate();
+  const { checkAuth } = useAuth();
 
   async function handleSignIn(e) {
     e.preventDefault();
@@ -18,8 +22,8 @@ export function LoginPage() {
 
     try {
       await signIn({ username: email, password });
-      // Redirect will happen via AuthContext
-      window.location.reload();
+      await checkAuth();
+      navigate('/upload', { replace: true });
     } catch (err) {
       setError(err.message || 'Failed to sign in');
     } finally {
