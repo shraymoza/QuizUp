@@ -82,3 +82,24 @@ module "monitoring" {
   sagemaker_endpoint_name = module.ml.endpoint_name != null ? module.ml.endpoint_name : ""
   alarm_topic_arn         = var.monitoring_alarm_topic_arn
 }
+
+# Amplify app for frontend hosting (optional - set amplify_repository_url to enable)
+module "amplify" {
+  count = var.amplify_repository_url != "" ? 1 : 0
+
+  source = "./modules/amplify"
+
+  project_name = var.project_name
+  environment  = var.environment
+  tags         = local.tags
+
+  repository_url = var.amplify_repository_url
+  oauth_token    = var.github_token
+  branch_name    = var.amplify_branch_name
+
+  environment_variables = {
+    VITE_API_BASE_URL = module.api.lambda_function_url
+  }
+
+  depends_on = [module.api]
+}

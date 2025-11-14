@@ -129,3 +129,23 @@ variable "ml_embedding_model_id" {
   type        = string
   default     = "sentence-transformers/all-MiniLM-L6-v2"
 }
+
+# Amplify configuration (optional - leave empty to skip Amplify deployment)
+variable "amplify_repository_url" {
+  description = "Git repository URL for Amplify app (e.g., https://github.com/user/repo.git). Leave empty to skip Amplify deployment."
+  type        = string
+  default     = ""
+}
+
+variable "github_token" {
+  description = "GitHub personal access token for Amplify Git integration. Required if amplify_repository_url is set."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "amplify_branch_name" {
+  description = "Branch name for Amplify deployment (e.g., main, master)"
+  type        = string
+  default     = "main"
+}

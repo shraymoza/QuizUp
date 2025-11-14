@@ -3,10 +3,17 @@ frontend:
   phases:
     preBuild:
       commands:
+        - echo "Node version:"
+        - node --version
+        - echo "NPM version:"
+        - npm --version
         - cd frontend
         - npm ci || npm install
+        - echo "Environment variable VITE_API_BASE_URL:"
+        - echo $VITE_API_BASE_URL
     build:
       commands:
+        - cd frontend
         - npm run build
   artifacts:
     baseDirectory: frontend/dist
