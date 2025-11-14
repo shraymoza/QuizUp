@@ -1,6 +1,28 @@
 # Copy this file to terraform.tfvars and adjust values for your environment.
+# Leave aws_profile empty/null to use environment variables (AWS_ACCESS_KEY_ID, etc.)
 
 environment = "dev"
 aws_region  = "us-east-1"
-aws_profile = "default"
+# aws_profile = null  # Uncomment and set to a profile name if using AWS CLI profiles instead of env vars
 project_name = "quizup"
+
+# Network configuration
+network_vpc_cidr             = "10.0.0.0/16"
+network_public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+network_private_subnet_cidrs = ["10.0.101.0/24", "10.0.102.0/24"]
+network_enable_nat_gateway   = true
+network_single_nat_gateway   = true
+
+# Storage configuration
+storage_raw_prefix     = "raw/"
+storage_index_prefix   = "indexes/"
+storage_outputs_prefix = "outputs/"
+
+# Lambda configuration (optional overrides)
+# lambda_source_dir      = "C:/path/to/rag/source"
+# lambda_package_path    = "C:/path/to/rag_package.zip"
+# lambda_embedding_model = "sentence-transformers/all-MiniLM-L6-v2"
+# lambda_rag_top_k       = 5
+
+# Monitoring
+# monitoring_alarm_topic_arn = "arn:aws:sns:us-east-1:123456789012:quizup-alerts"
