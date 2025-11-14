@@ -69,6 +69,18 @@ frontend:
           echo "Environment variable VITE_API_BASE_URL:"
           echo $VITE_API_BASE_URL
           
+          # Export environment variable for Vite build
+          # Vite only reads environment variables at build time, not runtime
+          if [ -z "$VITE_API_BASE_URL" ]; then
+            echo "❌ ERROR: VITE_API_BASE_URL is not set!"
+            echo "This environment variable must be set in Amplify Console"
+            echo "Go to: App settings → Environment variables"
+            exit 1
+          fi
+          
+          export VITE_API_BASE_URL
+          echo "✅ VITE_API_BASE_URL exported for build: $VITE_API_BASE_URL"
+          
           echo "Building application..."
           echo "Running: npm run build"
           npm run build
