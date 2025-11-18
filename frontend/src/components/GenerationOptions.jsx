@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 const OPTIONS = [
   { id: "study_notes", label: "Generate Study Notes" },
-  { id: "quiz", label: "Generate Quiz (5 questions)" }
+  { id: "quiz", label: "Generate Quiz (10 questions)" }
 ];
 
 export function GenerationOptions({ selected, onSelect }) {
